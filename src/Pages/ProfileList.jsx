@@ -85,7 +85,15 @@ const ProfileList = () => {
 
   return (
     <div className="admin-panel p-6 min-h-screen bg-gradient-to-r from-blue-50 to-blue-200">
-      <h1 className="text-3xl font-bold text-blue-700 mb-4">Profile List</h1>
+      <div className="flex justify-between items-center w-full my-2">
+        <h1 className="text-3xl font-bold text-blue-700 my-2">Profile List</h1>
+        <button
+          onClick={() => navigate("/admin")}
+          className="p-2 py-2 text-lg rounded-md bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          Admin Pannel
+        </button>
+      </div>
 
       <input
         type="text"
