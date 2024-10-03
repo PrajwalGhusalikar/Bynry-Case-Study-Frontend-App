@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ProfileList = () => {
   const [profiles, setProfiles] = useState([]);
@@ -10,11 +10,16 @@ const ProfileList = () => {
   const [mapVisible, setMapVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const savedProfiles = JSON.parse(localStorage.getItem("profiles")) || [];
     setProfiles(savedProfiles);
   }, []);
+
+  useEffect(() => {
+    handleCloseMap();
+  }, [location.pathname]);
 
   const viewProfileDetails = (profile) => {
     setSelectedProfile(profile);
@@ -56,6 +61,7 @@ const ProfileList = () => {
     if (mapVisible) {
       initializeMap();
     }
+    // eslint-disable-next-line
   }, [mapVisible, selectedProfile]);
 
   const filteredProfiles = profiles.filter(
@@ -78,85 +84,110 @@ const ProfileList = () => {
   };
 
   return (
-    <div className="admin-panel p-6">
-      <h1 className="text-xl font-bold">Profile list</h1>
+    <div className="admin-panel p-6 min-h-screen bg-gradient-to-r from-blue-50 to-blue-200">
+      <h1 className="text-3xl font-bold text-blue-700 mb-4">Profile List</h1>
 
       <input
         type="text"
         placeholder="Search profiles..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="border p-2 rounded mt-4"
+        className="border border-gray-300 p-3 rounded-lg w-full max-w-md mb-6 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
 
-      <div className="mt-6 overflow-x-auto">
-        <table className="min-w-full border-collapse border border-gray-200">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border border-gray-300 p-2">Sr. NO.</th>
-              <th className="border border-gray-300 p-2">Profile Img</th>
-              <th className="border border-gray-300 p-2">Name</th>
-              <th className="border border-gray-300 p-2">Description</th>
-              <th className="border border-gray-300 p-2">Address</th>
-              <th className="border border-gray-300 p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProfiles.map((profile, index) => (
-              <tr key={profile.id} className="border-b">
-                <td className="border border-gray-300 p-2">{index + 1}</td>
-                <td className="border flex justify-center items-center border-gray-300 p-2">
-                  <img
-                    src={profile?.imageFile}
-                    style={{ height: "70px", width: "70px" }}
-                    className="rounded-full h-20 w-20 border-gray-600"
-                    alt=""
-                  />
-                </td>
-                <td className="border border-gray-300 p-2">
-                  {highlightText(profile.name)}
-                </td>
-                <td className="border border-gray-300 p-2">
-                  {profile.description}
-                </td>
-                <td className="border border-gray-300 p-2">
-                  {highlightText(profile.address)}
-                </td>
-                <td className="border border-gray-300 p-2 mx-auto  space-x-4">
-                  <button>
-                    <FaEye
-                      onClick={() => navigate(`/profile/${profile.id}`)}
-                      className="text-blue-500"
-                      title="View Profile"
-                    />
-                  </button>
-                  <button
-                    className=" bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 mx-2"
-                    onClick={() => viewProfileDetails(profile)}
-                  >
-                    <p>Summary </p>
-                  </button>
-                </td>
+      {filteredProfiles.length === 0 ? (
+        <div className="text-center text-red-500 italic mt-8">
+          No profiles to show.
+          <div className="text-xl mb-1 ">
+            {" "}
+            <p className="my-2">
+              You can create one by navigating to Admin Pannel:
+            </p>
+            <button
+              onClick={() => navigate("/admin")}
+              className="p-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              Go To Admin Pannel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse bg-white rounded-lg shadow-md">
+            <thead>
+              <tr className="bg-blue-100">
+                <th className="border p-4 text-blue-700 w-32">Sr. NO.</th>
+                <th className="border p-4 text-blue-700 w-32">Profile Image</th>
+                <th className="border p-4 text-blue-700">Name</th>
+                <th className="border p-4 text-blue-700">Email</th>
+                <th className="border p-4 text-blue-700 w-80">Description</th>
+                <th className="border p-4 text-blue-700">Address</th>
+                <th className="border p-4 text-blue-700">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredProfiles.map((profile, index) => (
+                <tr
+                  key={profile.id}
+                  className="border-b hover:bg-blue-50 transition duration-150"
+                >
+                  <td className="border p-4 text-center">{index + 1}</td>
+                  <td
+                    onClick={() => navigate(`/profile/${profile.id}`)}
+                    className="border cursor-pointer flex justify-center p-4 text-center"
+                  >
+                    <img
+                      src={profile?.imageFile}
+                      style={{ height: "70px", width: "70px" }}
+                      className="rounded-full shadow-md"
+                      alt="Profile"
+                    />
+                  </td>
+                  <td className="border p-4">{highlightText(profile.name)}</td>
+                  <td className="border p-4">{highlightText(profile.email)}</td>
+                  <td st className="border p-4 text-wrap">
+                    {profile.description}
+                  </td>
+                  <td className="border p-4">
+                    {highlightText(profile.address)}
+                  </td>
+                  <td className="border p-4 text-center space-x-4 text-xl">
+                    <button
+                      className="text-teal-600"
+                      onClick={() => navigate(`/profile/${profile.id}`)}
+                    >
+                      <FaEye title="View Profile" />
+                    </button>
+                    <button
+                      className="bg-blue-500 text-white text-base py-1 px-2 rounded hover:bg-blue-600 "
+                      onClick={() => viewProfileDetails(profile)}
+                    >
+                      Summary
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-        {mapVisible && (
-          <div className="fixed top-0 left-0 w-full h-full bg-white z-50">
+      {mapVisible && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="relative bg-white rounded shadow-lg p-6 w-11/12 max-w-4xl">
             <button
               className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded"
               onClick={handleCloseMap}
             >
               Close Map
             </button>
-            <h2 className="text-lg font-bold p-4">
-              Location for {selectedProfile.name}
+            <h2 className="text-2xl  w-40 md:w-60  font-bold mb-4">
+              {selectedProfile.name.split(" ")[0]}'s Location
             </h2>
-            <div id="map" style={{ height: "400px", width: "100%" }} />
+            <div id="map" className="h-96 w-full"></div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

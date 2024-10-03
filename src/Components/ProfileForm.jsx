@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-const ProfileForm = ({ onSubmit, profile }) => {
+const ProfileForm = ({ onSubmit, profile, closeModal }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     address: "",
+    email: "",
+    phone: "",
+    interests: "",
     imageFile: "",
   });
   const [imagePreview, setImagePreview] = useState(null);
@@ -18,6 +21,9 @@ const ProfileForm = ({ onSubmit, profile }) => {
         name: "",
         description: "",
         address: "",
+        email: "",
+        phone: "",
+        interests: "",
         imageFile: "",
       });
       setImagePreview(null);
@@ -47,83 +53,123 @@ const ProfileForm = ({ onSubmit, profile }) => {
   };
 
   return (
-    <div className="profile-form mt-6 p-4 bg-white rounded-lg shadow-md">
+    <div className=" relative profile-form p-4  bg-white rounded-lg shadow-md">
       <h2 className="text-xl font-bold mb-4">
         {profile ? "Update Profile" : "Add Profile"}
       </h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="input border border-gray-300 rounded p-2 w-full"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="textarea border border-gray-300 rounded p-2 w-full"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Address</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            className="input border border-gray-300 rounded p-2 w-full"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Upload Image</label>
-          <input
-            type="file"
-            name="imageFile"
-            onChange={handleChange}
-            className="input border border-gray-300 rounded p-2 w-full"
-            accept="image/*"
-          />
+      <form
+        onSubmit={handleSubmit}
+        className="h-[600px] overflow-y-scroll mb-10"
+      >
+        <div className=" grid-cols-1 md:grid-cols-2 gap-4">
+          <div className=" col-span-2">
+            <label className="block text-gray-700 mb-2">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="input border border-gray-300 rounded p-2 w-full"
+              required
+            />
+          </div>
+          <div className=" col-span-2">
+            <label className="block text-gray-700 mb-2">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="textarea border border-gray-300 rounded p-2 w-full"
+              required
+            />
+          </div>
+          <div className=" col-span-2">
+            <label className="block text-gray-700 mb-2">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="input border border-gray-300 rounded p-2 w-full"
+              required
+            />
+          </div>
+          <div className=" ">
+            <label className="block text-gray-700 mb-2">City</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="input border border-gray-300 rounded p-2 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Phone</label>
+            <input
+              type="number"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="input border border-gray-300 rounded p-2 w-full"
+              required
+            />
+          </div>
+          <div className=" col-span-2">
+            <label className="block text-gray-700 mb-2">Interests</label>
+            <textarea
+              name="interests"
+              value={formData.interests}
+              onChange={handleChange}
+              className="textarea border border-gray-300 rounded p-2 w-full"
+              required
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-gray-700 mb-2">
+              Upload Profile Image
+            </label>
+            <input
+              type="file"
+              name="imageFile"
+              onChange={handleChange}
+              className="input border border-gray-300 rounded p-2 w-full"
+              accept="image/*"
+            />
+          </div>
         </div>
 
         {imagePreview && (
-          <div className="mb-4">
-            <h3 className="text-gray-700 font-bold">Profile Preview:</h3>
+          <div className="mt-4 flex justify-start items-center">
             <div className="border border-gray-300 rounded p-2">
               <img
                 src={imagePreview}
                 alt="Profile Preview"
-                className="w-full h-auto rounded"
-                style={{ maxHeight: "200px", objectFit: "cover" }}
+                className="w-24 h-24 rounded"
               />
-              <p className="mt-2">
-                <strong>Name:</strong> {formData.name}
-              </p>
-              <p>
-                <strong>Description:</strong> {formData.description}
-              </p>
-              <p>
-                <strong>Address:</strong> {formData.address}
-              </p>
+            </div>
+            <div className="ml-4">
+              <p>This is the uploaded profile image.</p>
             </div>
           </div>
         )}
 
-        <button
-          type="submit"
-          className="btn mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-        >
-          {profile ? "Update Profile" : "Add Profile"}
-        </button>
+        <div className=" absolute bottom-0  right-0 flex space-x-2 justify-end items-center mt-4">
+          <button
+            onClick={closeModal}
+            className="btn bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            className="btn bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+          >
+            {profile ? "Update Profile" : "Add Profile"}
+          </button>
+        </div>
       </form>
     </div>
   );
